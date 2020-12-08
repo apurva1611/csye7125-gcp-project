@@ -1,12 +1,12 @@
 variable "project" {
-	default = "csye7125-gcp-project"
-}
-
-variable "terraformcredentialspath" {
 	
 }
 
-variable "bucket" {
+variable "region" {
+  
+}
+
+variable "terraformcredentialspath" {
 	
 }
 

@@ -10,6 +10,9 @@ gsutil iam ch serviceAccount:terraform-sa@csye7125-gcp-project.iam.gserviceaccou
 
 gcloud projects add-iam-policy-binding csye7125-gcp-project --member serviceAccount:terraform-sa@csye7125-gcp-project.iam.gserviceaccount.com --role roles/storage.admin
 
+gcloud auth activate-service-account terraform-sa@csye7125-gcp-project-298000.iam.gserviceaccount.com --key-file=/Users/achirashah/Documents/cloud/csye7125-gcp/csye7125-gcp-project/terraform-sa.json
+
 gcloud config set account terraform-sa@csye7125-gcp-project.iam.gserviceaccount.com
 
 gcloud auth application-default login
+
