@@ -18,13 +18,14 @@ resource "google_compute_subnetwork" "network-with-private-secondary-ip-ranges" 
   ip_cidr_range = "10.2.0.0/16"
   region        = var.region
   network       = google_compute_network.custom-network.id
-  secondary_ip_range {
-    range_name    = "tf-network-secondary-range-update1"
-    ip_cidr_range = "192.168.10.0/24"
-  }
+  # secondary_ip_range {
+  #   range_name    = "tf-network-secondary-range-update1"
+  #   ip_cidr_range = "192.168.10.0/24"
+  # }
 }
 
 resource "google_compute_network" "custom-network" {
   name                    = "gcp-network"
   auto_create_subnetworks = false
+  delete_default_routes_on_create = true
 }
