@@ -1,0 +1,21 @@
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: webapp-ingress
+#   annotations:
+#     kubernetes.io/ingress.class: "nginx"
+#     cert-manager.io/cluster-issuer: "letsencrypt-test1"
+#     kubernetes.io/tls-acme: "true"
+# spec:
+#   tls:
+#     - hosts:
+#       - gcp.achirashah.com
+#       secretName: letsencrypt-secret
+#   rules:
+#   - host: gcp.achirashah.com
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: webapp
+#           servicePort: 8080
