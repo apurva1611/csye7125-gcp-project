@@ -14,6 +14,18 @@ variable "db_name" {
 
 }
 
+variable "webappdb" {
+
+}
+
+variable "pollerdb" {
+
+}
+
+variable "notifierdb" {
+
+}
+
 variable "master_user_name" {
 
 }

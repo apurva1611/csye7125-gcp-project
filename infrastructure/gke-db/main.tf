@@ -159,16 +159,16 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "csye7125-node-pool"
   location   = var.region
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 3
   
   autoscaling {
-    min_node_count = "3"
+    min_node_count = "1"
     max_node_count = "5"
   }
   
   node_config {
     preemptible  = true
-    machine_type = "e2-medium"
+    machine_type = "e2-standard-2"
 
     metadata = {
       disable-legacy-endpoints = "true"
@@ -179,6 +179,11 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     ]
     tags = ["mysql-client"]
   }
+
+#   upgrade_settings {
+#       max_surge = 10
+#       max_unavailable = 3
+#   }
 }
 
 // db
@@ -199,9 +204,11 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 }
 
 // db
-resource "google_sql_database_instance" "instance" {
-  name   = "test6-instance"
+// db
+resource "google_sql_database_instance" "webapp_instance" {
+  name   = "webapp1-instance"
   region = "us-east1"
+  database_version = "MYSQL_8_0"  
   deletion_protection = false
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
@@ -214,21 +221,93 @@ resource "google_sql_database_instance" "instance" {
   }
 }
 
-resource "google_sql_database" "default" {
-  depends_on = [google_sql_database_instance.instance]
+resource "google_sql_database" "webapp_db" {
+  depends_on = [google_sql_database_instance.webapp_instance]
 
-  name      = var.db_name
+  name      = var.webappdb
   project   = var.project
-  instance  = google_sql_database_instance.instance.name
+  instance  = google_sql_database_instance.webapp_instance.name
   # charset   = var.db_charset
   # collation = var.db_collation
 }
 
-resource "google_sql_user" "default" {
-  depends_on = [google_sql_database.default]
+resource "google_sql_user" "webappuser" {
+  depends_on = [google_sql_database.webapp_db]
 
   project  = var.project
   name     = var.master_user_name
   password = var.master_user_password
-  instance = google_sql_database_instance.instance.name
+  instance = google_sql_database_instance.webapp_instance.name
+}
+
+// poller db
+resource "google_sql_database_instance" "poller_instance" {
+  name   = "poller1-instance"
+  region = "us-east1"
+  database_version = "MYSQL_8_0"
+  deletion_protection = false
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
+  settings {
+    tier = "db-f1-micro"
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network = google_compute_network.custom_network.id
+    }
+  }
+}
+
+resource "google_sql_database" "poller_db" {
+  depends_on = [google_sql_database_instance.poller_instance]
+
+  name      = var.pollerdb
+  project   = var.project
+  instance  = google_sql_database_instance.poller_instance.name
+  # charset   = var.db_charset
+  # collation = var.db_collation
+}
+
+resource "google_sql_user" "polleruser" {
+  depends_on = [google_sql_database.poller_db]
+
+  project  = var.project
+  name     = var.master_user_name
+  password = var.master_user_password
+  instance = google_sql_database_instance.poller_instance.name
+}
+
+// notifier db
+resource "google_sql_database_instance" "notifier_instance" {
+  name   = "notifier1-instance"
+  region = "us-east1"
+  database_version = "MYSQL_8_0"
+  deletion_protection = false
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+
+  settings {
+    tier = "db-f1-micro"
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network = google_compute_network.custom_network.id
+    }
+  }
+}
+
+resource "google_sql_database" "notifier_database" {
+  depends_on = [google_sql_database_instance.notifier_instance]
+
+  name      = var.notifierdb
+  project   = var.project
+  instance  = google_sql_database_instance.notifier_instance.name
+  # charset   = var.db_charset
+  # collation = var.db_collation
+}
+
+resource "google_sql_user" "notifieruser" {
+  depends_on = [google_sql_database.notifier_database]
+
+  project  = var.project
+  name     = var.master_user_name
+  password = var.master_user_password
+  instance = google_sql_database_instance.notifier_instance.name
 }
