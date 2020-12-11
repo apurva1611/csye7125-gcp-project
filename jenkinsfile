@@ -28,7 +28,7 @@ node {
 
     stage('Setup') {
         // Setup gcloud service account access
-        sh "gcloud auth activate-service-account --key-file=${env.terraform-sa}"
+        sh "gcloud auth activate-service-account --key-file=${env.KEYFILE}"
         echo "activated account"
         sh "gcloud config set core/project ${env.PROJECT_ID}"
         sh "gcloud config set container/cluster ${env.CLUSTER_NAME}"
