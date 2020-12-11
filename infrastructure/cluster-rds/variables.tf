@@ -2,24 +2,34 @@ variable "project" {
 	default = "csye7125-gcp-project"
 }
 
+variable "terraformcredentialspath" {
+	
+}
 
 variable "region" {
 
 }
 
-variable "terraformcredentialspath" {
-	
+variable "db_name" {
+
 }
 
+variable "webappdb" {
 
-variable "db_name" {
-	
+}
+
+variable "pollerdb" {
+
+}
+
+variable "notifierdb" {
+
 }
 
 variable "master_user_name" {
-	
+
 }
 
 variable "master_user_password" {
-	
+
 }
