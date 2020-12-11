@@ -35,7 +35,7 @@ resource "google_compute_subnetwork" "custom_subnetwork" {
   private_ip_google_access = true
 }
 
-// This is allow SSH connection http and https connection
+# // This is allow SSH connection http and https connection
 resource "google_compute_firewall" "allow-http-https" {
   name = "allow-http-https"
   project = var.project
@@ -44,32 +44,33 @@ resource "google_compute_firewall" "allow-http-https" {
     protocol = "tcp"
     ports    = ["443", "80"]
   }
-  target_tags = ["allow-https"]
+  target_tags = ["allow-https","allow-http"]
   depends_on  = [google_compute_network.custom_network]
 }
 
-resource "google_compute_firewall" "allow-icmp" {
-  name = "allow-icmp"
-  project = var.project
-  network = google_compute_network.custom_network.id 
+resource "google_compute_firewall" "allow-db" {
+  name    = "allow-from-gcp-network-cluster-to-db"
+  network = google_compute_network.custom_network.id
   allow {
     protocol = "icmp"
   }
-  target_tags = ["allow-icmp"]
-  depends_on  = [google_compute_network.custom_network]
+  allow {
+    protocol = "tcp"
+    ports    = ["3306"]
+  }
+  source_tags = ["mysql-client"]
+  target_tags = ["mysql-server"]
 }
 
-// This is allow SSH connection using IAP
+# // This is allow SSH connection using IAP
 resource "google_compute_firewall" "allow-iap-ssh" {
   name              = "allow-iap-ssh"
   project           = var.project
   network           = google_compute_network.custom_network.id
+  source_ranges     = ["0.0.0.0/0"]
   allow {
     protocol = "tcp"
     ports    = ["22"]
-  }
-  allow {
-    protocol = "icmp"
   }
   target_tags       = ["allow-iap-ssh"]
   depends_on        = [google_compute_network.custom_network]
@@ -115,7 +116,13 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 1
+  initial_node_count       = 3
+
+  private_cluster_config {
+    master_ipv4_cidr_block = "10.2.0.0/28"
+    enable_private_nodes  = true
+    enable_private_endpoint = false
+  }
 
   master_auth {
     username = "admin"
@@ -125,17 +132,22 @@ resource "google_container_cluster" "primary" {
       issue_client_certificate = false
     }
   }
+  ip_allocation_policy {
+    cluster_ipv4_cidr_block  = "10.20.0.0/16"
+    services_ipv4_cidr_block = "10.40.0.0/16"
+  }
+
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "csye7125-node-pool"
   location   = var.region
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 10
   
   autoscaling {
-    min_node_count = "3"
-    max_node_count = "5"
+    min_node_count = "5"
+    max_node_count = "15"
   }
   
   node_config {
@@ -149,6 +161,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+    tags = ["mysql-client"]
   }
 }
 
@@ -171,7 +184,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
 // db
 resource "google_sql_database_instance" "instance" {
-  name   = "test6-instance"
+  name   = "test8-instance"
   region = "us-east1"
   deletion_protection = false
   depends_on = [google_service_networking_connection.private_vpc_connection]
