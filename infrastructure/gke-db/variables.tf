@@ -33,3 +33,15 @@ variable "master_user_name" {
 variable "master_user_password" {
 
 }
+
+variable "webappinstance" {
+
+}
+
+variable "pollerinstance" {
+	
+}
+
+variable "notifierinstance" {
+	
+}

@@ -159,11 +159,11 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "csye7125-node-pool"
   location   = var.region
   cluster    = google_container_cluster.primary.name
-  node_count = 3
+  node_count = 1
   
   autoscaling {
     min_node_count = "1"
-    max_node_count = "5"
+    max_node_count = "3"
   }
   
   node_config {
@@ -180,10 +180,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     tags = ["mysql-client"]
   }
 
-#   upgrade_settings {
-#       max_surge = 10
-#       max_unavailable = 3
-#   }
+  upgrade_settings {
+      max_surge = 5
+      max_unavailable = 3
+  }
 }
 
 // db
@@ -206,8 +206,8 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 // db
 // db
 resource "google_sql_database_instance" "webapp_instance" {
-  name   = "webapp1-instance"
-  region = "us-east1"
+  name   = var.webappinstance
+  region = var.region
   database_version = "MYSQL_8_0"  
   deletion_protection = false
   depends_on = [google_service_networking_connection.private_vpc_connection]
@@ -242,8 +242,8 @@ resource "google_sql_user" "webappuser" {
 
 // poller db
 resource "google_sql_database_instance" "poller_instance" {
-  name   = "poller1-instance"
-  region = "us-east1"
+  name   = var.pollerinstance
+  region = var.region
   database_version = "MYSQL_8_0"
   deletion_protection = false
   depends_on = [google_service_networking_connection.private_vpc_connection]
@@ -278,8 +278,8 @@ resource "google_sql_user" "polleruser" {
 
 // notifier db
 resource "google_sql_database_instance" "notifier_instance" {
-  name   = "notifier1-instance"
-  region = "us-east1"
+  name   = var.notifierinstance
+  region = var.region
   database_version = "MYSQL_8_0"
   deletion_protection = false
   depends_on = [google_service_networking_connection.private_vpc_connection]
