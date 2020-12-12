@@ -99,7 +99,7 @@ def helmDryrunPoller () {
 
 def helmInstallPoller () {
     echo "deploying poller"
-    sh "/usr/local/bin/helm upgrade --install poller ../helm/poller -n api --set image.repository='${pollerImage}',secret.regcred.dockerconfigjson=ewogICAgImF1dGhzIjogewogICAgICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOiB7CiAgICAgICAgICAgICJhdXRoIjogIllXTm9hWEpoYzJoaGFEcEJZMmhwY21FeU1EQT0iCiAgICAgICAgfSwKICAgICAgICAiSHR0cEhlYWRlcnMiOiB7CiAgICAgICAgICAgICJVc2VyLUFnZW50IjogIkRvY2tlci1DbGllbnQvMTkuMDMuMTMgKGRhcndpbikiCiAgICAgICAgfQogICAgfQp9,configmap.rdsurl='${env.pollerRdsurl}'"
+    sh "/usr/local/bin/helm upgrade --install poller ./helm/poller -n api --set image.repository='${pollerImage}',secret.regcred.dockerconfigjson=ewogICAgImF1dGhzIjogewogICAgICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOiB7CiAgICAgICAgICAgICJhdXRoIjogIllXTm9hWEpoYzJoaGFEcEJZMmhwY21FeU1EQT0iCiAgICAgICAgfSwKICAgICAgICAiSHR0cEhlYWRlcnMiOiB7CiAgICAgICAgICAgICJVc2VyLUFnZW50IjogIkRvY2tlci1DbGllbnQvMTkuMDMuMTMgKGRhcndpbikiCiAgICAgICAgfQogICAgfQp9,configmap.rdsurl='${env.pollerRdsurl}'"
 }
 
 def helmDryrunNotifier () {
