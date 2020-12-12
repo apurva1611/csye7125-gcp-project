@@ -43,12 +43,12 @@ def applyCRDS (){
     sh "kubectl apply -f ./helm/crds/"
 }
 
-def helmDryrunApp-nginx () {
+def helmDryrunAppNginx () {
     echo "dryrun app-prereq"
     sh "/usr/local/bin/helm upgrade --install app-nginx ./helm/ingress-nginx  -n monitoring --dry-run --debug"
 }
 
-def helmInstallApp-nginx () {
+def helmInstallAppNginx () {
     echo "deploying app-prereq"
     sh "/usr/local/bin/helm upgrade --install app-nginx ./helm/ingress-nginx  -n monitoring"
 }
@@ -61,12 +61,12 @@ def addCertCRDS (){
     sh "kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.4/cert-manager.crds.yaml"
 }
 
-def helmDryrunCert-manager () {
+def helmDryrunCertManager () {
     echo "dryrun app-prereq"
     sh "/usr/local/bin/helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager  --version v1.0.4 --dry-run --debug"
 }
 
-def helmInstallCert-manager () {
+def helmInstallCertManager () {
     echo "deploying app-prereq"
     sh "/usr/local/bin/helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager  --version v1.0.4"
 }
@@ -79,7 +79,7 @@ def issueIssuer () {
     sh "kubectl apply -f ./helm/issuer/letsencrypt-staging.yaml -n monitoring"
 }
 
-def ext-svc () {
+def extSvc () {
     sh "kubectl apply -f ./helm/webapp/external-svc.yaml"
 }
 
@@ -136,8 +136,8 @@ node {
             echo "$pwd"
             helmDryrunAppPrereq ()
             helmDryrunElasticSearch ()
-            helmDryrunApp-nginx ()
-            helmDryrunCert-manager ()
+            helmDryrunAppNginx ()
+            helmDryrunCertManager ()
             helmDryrunWebapp ()
             helmDryrunPoller ()
             helmDryrunNotifier ()
@@ -150,13 +150,13 @@ node {
             helmInstallAppPrereq ()
             helmInstallElasticSearch ()
             applyCRDS ()
-            helmInstallApp-nginx ()
+            helmInstallAppNginx ()
             addJetstackRepo ()
             addCertCRDS ()
-            helmInstallCert-manager ()
+            helmInstallCertManager ()
             wait ()
             issueIssuer ()
-            ext-svc ()
+            extSvc ()
             helmInstallWebapp()
             helmInstallPoller ()
             helmInstallNotifier ()
