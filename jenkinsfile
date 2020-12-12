@@ -142,24 +142,40 @@ node {
             helmDryrunNotifier ()
         }
 
-        stage('helm Deployment') {
+        stage('create namespace') {
             createNamespace('monitoring') 
             createNamespace('cert-manager') 
             createNamespace('api') 
+        } 
+
+        stage('appprereq deployment') {
             helmInstallAppPrereq ()
+        }
+        stage('elasticsearch deployment'){
             helmInstallElasticSearch ()
-            applyCRDS ()
+        }
+        stage('nginx deployment') {
             helmInstallAppNginx ()
+        }
+        stage('crd deployment') {
+            applyCRDS ()
             addJetstackRepo ()
             addCertCRDS ()
+        }
+        stage('nginx deployment') {
             helmInstallCertManager ()
             issueIssuer ()
+        }
+        stage('webapp deployment') {
             extSvc ()
             helmInstallWebapp()
+        }
+        stage('poller deployment') {
             helmInstallPoller ()
+        }
+        stage('notifier deployment') {
             helmInstallNotifier ()
-        } 
-   
+        }   
     }
         catch (Exception err){
             err_msg = "Test had Exception(${err})"
