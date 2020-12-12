@@ -67,12 +67,11 @@ def helmDryrunCertManager () {
 }
 
 def helmInstallCertManager () {
-    echo "deploying app-prereq"
-    sh "/usr/local/bin/helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager  --version v1.0.4"
-}
-
-def wait () {
-    sh "sleep 120"
+    script {
+        echo "dryrun app-prereq"
+        sh "/usr/local/bin/helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager  --version v1.0.4"
+        sh "sleep 120"
+    }
 }
 
 def issueIssuer () {
@@ -154,7 +153,6 @@ node {
             addJetstackRepo ()
             addCertCRDS ()
             helmInstallCertManager ()
-            wait ()
             issueIssuer ()
             extSvc ()
             helmInstallWebapp()
