@@ -4,14 +4,13 @@ metadata:
   labels:
     name: letsencrypt-prod
   name: letsencrypt-prod
-  namespace: cert-manager
 spec:
-  acme:
-    email: shah.ac@northeastern.edu
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    server: https://acme-v02.api.letsencrypt.org/directory
-    solvers:
-    - http01:
-       ingress:
-         class: nginx
+ acme:
+  email: shah.ac@northeastern.edu
+  privateKeySecretRef:
+    name: letsencrypt-privatekey
+  server: https://acme-v02.api.letsencrypt.org/directory
+  solvers:
+  - http01:
+      ingress:
+        class: nginx

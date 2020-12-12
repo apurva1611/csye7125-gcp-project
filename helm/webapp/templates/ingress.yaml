@@ -4,7 +4,7 @@ metadata:
   name: webapp-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-test1"
+    cert-manager.io/cluster-issuer: "letsencrypt-test2"
     kubernetes.io/tls-acme: "true"
 spec:
   tls:
