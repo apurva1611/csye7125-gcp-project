@@ -1,0 +1,19 @@
+gsutil mb -p csye7125-gcp-project -c regional -l us-east1 gs://csye7125-gcp-project-bucket
+
+gsutil versioning set on gs://csye7125-gcp-project-bucket
+
+#creates terraform service account for project and grants permissions on tfstate bucket and project
+
+gcloud beta iam service-accounts create "terraform-sa" --display-name "terraform sa" --project "csye7125-gcp-project"
+
+gsutil iam ch serviceAccount:terraform-sa@csye7125-gcp-project.iam.gserviceaccount.com:objectAdmin gs://csye7125-gcp-project-bucket
+
+gcloud projects add-iam-policy-binding csye7125-gcp-project --member serviceAccount:terraform-sa@csye7125-gcp-project.iam.gserviceaccount.com --role roles/storage.admin
+
+gcloud auth activate-service-account terraform-sa@csye7125-gcp-project-298000.iam.gserviceaccount.com --key-file=/Users/achirashah/Documents/cloud/csye7125-gcp/csye7125-gcp-project/terraform-sa.json
+
+gcloud config set account terraform-sa@csye7125-gcp-project.iam.gserviceaccount.com
+
+gcloud auth application-default login
+
+gcloud container clusters get-credentials csye7125-gke-cluster --region=us-east1
