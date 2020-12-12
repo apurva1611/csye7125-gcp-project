@@ -16,3 +16,4 @@ gcloud config set account terraform-sa@csye7125-gcp-project.iam.gserviceaccount.
 
 gcloud auth application-default login
 
+gcloud container clusters get-credentials csye7125-gke-cluster --region=us-east1
