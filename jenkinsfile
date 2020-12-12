@@ -104,7 +104,7 @@ def helmInstallPoller () {
 
 def helmDryrunNotifier () {
     echo "dryrun notifier"
-    sh "/usr/local/bin/helm upgrade --install notifier ./helm/notifier -n api --set image.repository='${notifierImage}',secret.regcred.dockerconfigjson=ewogICAgImF1dGhzIjogewogICAgICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOiB7CiAgICAgICAgICAgICJhdXRoIjogIllXTm9hWEpoYzJoaGFEcEJZMmhwY21FeU1EQT0iCiAgICAgICAgfSwKICAgICAgICAiSHR0cEhlYWRlcnMiOiB7CiAgICAgICAgICAgICJVc2VyLUFnZW50IjogIkRvY2tlci1DbGllbnQvMTkuMDMuMTMgKGRhcndpbikiCiAgICAgICAgfQogICAgfQp9,configmap.rdsurl='${env.notifierRdsurl}'--dry-run --debug"
+    sh "/usr/local/bin/helm upgrade --install notifier ./helm/notifier -n api --set image.repository='${notifierImage}',secret.regcred.dockerconfigjson=ewogICAgImF1dGhzIjogewogICAgICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOiB7CiAgICAgICAgICAgICJhdXRoIjogIllXTm9hWEpoYzJoaGFEcEJZMmhwY21FeU1EQT0iCiAgICAgICAgfSwKICAgICAgICAiSHR0cEhlYWRlcnMiOiB7CiAgICAgICAgICAgICJVc2VyLUFnZW50IjogIkRvY2tlci1DbGllbnQvMTkuMDMuMTMgKGRhcndpbikiCiAgICAgICAgfQogICAgfQp9,configmap.rdsurl='${env.notifierRdsurl}' --dry-run --debug"
 }
 
 def helmInstallNotifier () {
